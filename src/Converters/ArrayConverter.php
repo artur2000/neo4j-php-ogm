@@ -37,7 +37,7 @@ class ArrayConverter extends Converter
             foreach ($value as $value) {
                 if (is_object($value)) {
                     if ($value instanceof \JsonSerializable) {
-                        $items[] = json_encode($value);
+                        $items[] = json_decode(json_encode($value), true);
                     } else if (method_exists($value, 'getId')) {
                         $items[] = $value->getId();
                     } else {
