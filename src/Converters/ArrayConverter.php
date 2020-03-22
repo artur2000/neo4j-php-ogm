@@ -73,10 +73,29 @@ class ArrayConverter extends Converter
         $v = $values[$this->propertyName];
 
         if (self::DEFAULT_FORMAT === $format) {
-            return json_decode($v, true);
+            $arrayData = json_decode($v, true);
+        } else {
+            $arrayData = json_decode($v, true);
         }
 
-        return json_decode($v, true);
+        if ($options['class']) {
+            $className = $options['class'];
+            if (class_exists($options['class'])) {
+                $empty = new $className();
+                if (method_exists($empty, 'fromArray')) {
+                    $objectArray = [];
+                    foreach ($arrayData as $rowData) {
+                        $objectArray[] = $empty::fromArray($rowData);
+                    }
+                    return $objectArray;
+                } else {
+                    return $arrayData;
+                }
+            } else {
+                return $arrayData;
+                //throw new ConverterException(sprintf('Class does not exists: %s', $options['class']));
+            }
+        }
 
     }
 
